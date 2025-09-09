@@ -1,17 +1,10 @@
-import os
-from openai import OpenAI
-from dotenv import load_dotenv
 from utils.agent_base import Agent
-load_dotenv()
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+from utils.config import groq_client 
 
 class CEOAgent(Agent):
-    """CEO Agent: powered by LLM for strategy vision."""
-
     def contribute(self, topic: str) -> str:
-        prompt = f"You are a CEO. Provide a startup vision and high-level strategy for: {topic}"
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[{"role": "user", "content": prompt}]
+        response = groq_client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=[{"role": "user", "content": f"As the CEO, analyze this idea: {topic}"}]
         )
-        return response.choices[0].message.content.strip()
+        return response.choices[0].message.content
